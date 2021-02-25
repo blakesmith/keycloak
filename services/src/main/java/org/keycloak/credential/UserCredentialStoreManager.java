@@ -166,7 +166,11 @@ public class UserCredentialStoreManager extends AbstractStorageManager<UserStora
 
     public static <T> Stream<T> getCredentialProviders(KeycloakSession session, Class<T> type) {
         return session.getKeycloakSessionFactory().getProviderFactoriesStream(CredentialProvider.class)
-                .filter(f -> Types.supports(type, f, CredentialProviderFactory.class))
+            .filter(f -> {
+                    boolean supports = Types.supports(type, f, CredentialProviderFactory.class);
+                    System.out.println("Registered local factory: " + f + "subtype: " + type + ", supports: " + supports);
+                    return supports;
+                })
                 .map(f -> (T) session.getProvider(CredentialProvider.class, f.getId()));
     }
 
